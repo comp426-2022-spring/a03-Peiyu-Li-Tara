@@ -96,8 +96,7 @@ if (num != null)
 else
 	flips = coinFlips(1) 
 summary = countFlips(flips)
-console.log(flips)
-console.log(summary)
+return {flips: flips, summary: summary}
 }
 
 const express = require('express');
@@ -113,19 +112,13 @@ const server = app.listen(5000, () => {
 });
 
 app.get('/app', (req, res) => {
-	res.status(200).end('OK')
-	res.type('text/plain')
-    // // Respond with status 200
-    // res.statusCode = 200;
-    // // Respond with status message "OK"
-    // res.statusMessage = 'OK';
-    // res.writeHead( res.statusCode, { 'Content-Type' : 'text/plain' });
-    // res.end(res.statusCode+ ' ' +res.statusMessage)
+    // Respond with status 200
+    res.statusCode = 200;
+    // Respond with status message "OK"
+    res.statusMessage = 'OK';
+    res.writeHead( res.statusCode, { 'Content-Type' : 'text/plain' });
+    res.end(res.statusCode+ ' ' +res.statusMessage)
 }); 
-
-app.get('/app/echo/:number', (req, res) => {
-	res.status(200).json({'message': req.params.number})
-})
 
 app.get('/app/flip', (req, res) => {
 	var flip = coinFlip()
@@ -133,11 +126,18 @@ app.get('/app/flip', (req, res) => {
 });
 
 app.get('/app/flips/:number', (req, res) => {
-	const flips = manyflips(req.params.number)
-	//Other
-	//expressions
-	//go
-	//here
+	const flips = flipManyCoins(req.params.number)
+	res.status(200).json({'raw': flips.flips, "summary": flips.summary})
+});
+
+app.get('/app/flip/call/heads', (req, res) => {
+	const flip = flipACoin("heads")
+	res.status(200).json({'call': 'heads', 'flip': flip.flip, 'result': flip.result})
+});
+
+app.get('/app/flip/call/tails', (req, res) => {
+	const flip = flipACoin("tails")
+	res.status(200).json({'call': 'tails', 'flip': flip.flip, 'result': flip.result})
 });
 
 // Default response for any other request
